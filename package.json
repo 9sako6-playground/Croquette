@@ -1,0 +1,20 @@
+{
+  "name": "Croquette",
+  "version": "1.0.0",
+  "description": "a programming language written in  TypeScript",
+  "main": "index.ts",
+  "repository": "https://github.com/9sako6-playground/Croquette.git",
+  "author": "9sako6 <31821663+9sako6@users.noreply.github.com>",
+  "license": "MIT",
+  "scripts": {
+    "format": "deno fmt lexer/ token/ tests/",
+    "test": "npx jest"
+  },
+  "devDependencies": {
+    "@types/jest": "^25.2.3",
+    "jest": "^26.0.1"
+  },
+  "dependencies": {
+    "typescript": "^3.9.3"
+  }
+}
