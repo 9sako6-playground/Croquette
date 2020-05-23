@@ -99,7 +99,7 @@ export class Parser {
   }
 
   parseProgram(): Program {
-    const program = new Program();
+    const program = new Program([]);
     while (this.curToken.type !== TokenTypes.EOF) {
       const statement = this.parseStatement();
       if (statement !== null) {
