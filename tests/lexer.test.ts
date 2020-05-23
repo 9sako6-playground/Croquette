@@ -1,5 +1,5 @@
-import { Lexer } from "../lexer/lexer";
-import { TokenTypes, TokenType } from "../token/token";
+import { Lexer } from "../lexer";
+import { TokenTypes, TokenType } from "../token";
 
 test("test nextToken with signs", () => {
   const source = "=+(){},;";

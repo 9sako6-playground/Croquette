@@ -4,7 +4,7 @@ import {
   TokenTypes,
   Keyword,
   KeywordTypes
-} from "../token/token";
+} from "../token";
 
 type Char = string | 0;
 export class Lexer {
@@ -84,7 +84,7 @@ export class Lexer {
     this.skipWhitespace();
     switch (this.ch) {
       case "=":
-        if (this.peekChar() === '=') {
+        if (this.peekChar() === "=") {
           const ch = this.ch;
           this.readChar();
           token = new Token(TokenTypes.EQ, ch + this.ch);
@@ -93,7 +93,7 @@ export class Lexer {
         }
         break;
       case "!":
-        if (this.peekChar() === '=') {
+        if (this.peekChar() === "=") {
           const ch = this.ch;
           this.readChar();
           token = new Token(TokenTypes.NOT_EQ, ch + this.ch);
