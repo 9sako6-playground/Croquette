@@ -5,7 +5,8 @@ import {
   Expression,
   Statement,
   LetStatement,
-  Identifier
+  Identifier,
+  ReturnStatement
 } from "../ast";
 
 export class Parser {
@@ -31,6 +32,8 @@ export class Parser {
     switch (this.curToken.type) {
       case TokenTypes.LET:
         return this.parseLetStatement();
+      case TokenTypes.RETURN:
+        return this.parseReturnStatement();
       default:
         return null;
     }
@@ -51,6 +54,18 @@ export class Parser {
     if (!this.expectPeek(TokenTypes.ASSIGN)) {
       return null;
     }
+
+    // TODO: skip
+    while (!this.curTokenIs(TokenTypes.SEMICOLON)) {
+      this.nextToken();
+    }
+    return statement;
+  }
+
+  parseReturnStatement(): Statement | null {
+    const token = { ...this.curToken };
+    const statement = new ReturnStatement(token, (new Expression()));
+    this.nextToken();
 
     // TODO: skip
     while (!this.curTokenIs(TokenTypes.SEMICOLON)) {
@@ -85,7 +100,6 @@ export class Parser {
 
   parseProgram(): Program {
     const program = new Program();
-    program.statements = [];
     while (this.curToken.type !== TokenTypes.EOF) {
       const statement = this.parseStatement();
       if (statement !== null) {

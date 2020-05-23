@@ -19,7 +19,7 @@ export class Expression implements Node {
 }
 
 export class Program {
-  public statements: Array<Statement> = [];
+  readonly statements: Array<Statement> = [];
   tokenLiteral(): string {
     if (this.statements.length > 0) {
       return this.statements[0].tokenLiteral();
@@ -31,20 +31,24 @@ export class Program {
 
 export class LetStatement extends Statement {
   constructor(
-    private _token: Token,
-    private _name: Identifier,
-    private _value: Expression,
+    readonly token: Token,
+    readonly name: Identifier,
+    readonly value: Expression,
   ) {
     super();
   }
-  get token() {
-    return this._token;
+  statementNode() {}
+  tokenLiteral(): string {
+    return this.token.literal;
   }
-  get name() {
-    return this._name;
-  }
-  get value() {
-    return this._value;
+}
+
+export class ReturnStatement extends Statement {
+  constructor(
+    readonly token: Token,
+    readonly returnValue: Expression,
+  ) {
+    super();
   }
   statementNode() {}
   tokenLiteral(): string {
@@ -54,15 +58,9 @@ export class LetStatement extends Statement {
 
 export class Identifier {
   constructor(
-    private _token: Token,
-    private _value: string,
+    readonly token: Token,
+    readonly value: string,
   ) {}
-  get token() {
-    return this._token;
-  }
-  get value() {
-    return this._value;
-  }
   expressionNode() {}
   tokenLiteral(): string {
     return this.token.literal;

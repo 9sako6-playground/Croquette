@@ -27,6 +27,23 @@ let mod = 1000000007;
   }
 });
 
+test("should parse return statements", () => {
+  const source = `
+return 5;
+return 10;
+return  1000000007;
+`;
+  const lexer = new Lexer(source);
+  const parser = new Parser(lexer);
+  const program = parser.parseProgram();
+  expect(program).toBeTruthy;
+  expect(program.statements.length).toEqual(3);
+
+  program.statements.forEach((statement) => {
+    expect(statement.tokenLiteral()).toEqual("return");
+  });
+});
+
 test("should throw Error", () => {
   const source = `
 let x = 5;
