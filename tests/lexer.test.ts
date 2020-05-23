@@ -1,10 +1,10 @@
-import { Lexer } from "../lexer";
-import { TokenTypes, TokenType } from "../token";
+import { Lexer } from "../src/lexer";
+import { TokenTypes, TokenType } from "../src/token";
 
 test("test nextToken with signs", () => {
   const source = "=+(){},;";
   const lexer = new Lexer(source);
-  const answers: Array<{ type: TokenType; literal: string | number }> = [
+  const answers: Array<{ type: TokenType; literal: string }> = [
     { type: TokenTypes.ASSIGN, literal: "=" },
     { type: TokenTypes.PLUS, literal: "+" },
     { type: TokenTypes.LPAREN, literal: "(" },
@@ -43,7 +43,7 @@ if (5 < 10){
 11 != 10;
 `;
   const lexer = new Lexer(source);
-  const answers: Array<{ type: TokenType; literal: string | number }> = [
+  const answers: Array<{ type: TokenType; literal: string }> = [
     { type: TokenTypes.LET, literal: "let" },
     { type: TokenTypes.IDENT, literal: "five" },
     { type: TokenTypes.ASSIGN, literal: "=" },
