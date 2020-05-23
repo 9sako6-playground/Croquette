@@ -14,7 +14,14 @@ export type TokenType =
   | OperatorType
   | KeywordType;
 
-export type KeywordType = "FUNCTION" | "LET";
+export type KeywordType =
+  | "FUNCTION"
+  | "LET"
+  | "TRUE"
+  | "FALSE"
+  | "IF"
+  | "ELSE"
+  | "RETURN";
 
 export type OperatorType =
   | "ASSIGN"
@@ -57,13 +64,30 @@ export const TokenTypes: TokenTypes = {
   RBRACE: "RBRACE",
   FUNCTION: "FUNCTION",
   LET: "LET",
+  TRUE: "TRUE",
+  FALSE: "FALSE",
+  IF: "IF",
+  ELSE: "ELSE",
+  RETURN: "RETURN",
 };
 
-export type Keyword = "fn" | "let";
+export type Keyword =
+  | "fn"
+  | "let"
+  | "true"
+  | "false"
+  | "if"
+  | "else"
+  | "return";
 
 export type KeywordTypes = { [K in Keyword]: KeywordType };
 
 export const KeywordTypes: KeywordTypes = {
   fn: "FUNCTION",
   let: "LET",
+  true: "TRUE",
+  false: "FALSE",
+  if: "IF",
+  else: "ELSE",
+  return: "RETURN",
 };

@@ -29,11 +29,16 @@ let add = fn(x, y){
   x + y;
 };
 
-let result = add(five, ten);
+let _result = add(five, ten);
 
 !1 < 4*y;
 x/ 1 > y-1;
-`;
+
+if (5 < 10){
+  return true;
+} else {
+  return false;
+}`;
   const lexer = new Lexer(source);
   const answers: Array<{ type: TokenType; literal: string | number }> = [
     { type: TokenTypes.LET, literal: "let" },
@@ -63,7 +68,7 @@ x/ 1 > y-1;
     { type: TokenTypes.RBRACE, literal: "}" },
     { type: TokenTypes.SEMICOLON, literal: ";" },
     { type: TokenTypes.LET, literal: "let" },
-    { type: TokenTypes.IDENT, literal: "result" },
+    { type: TokenTypes.IDENT, literal: "_result" },
     { type: TokenTypes.ASSIGN, literal: "=" },
     { type: TokenTypes.IDENT, literal: "add" },
     { type: TokenTypes.LPAREN, literal: "(" },
@@ -87,6 +92,23 @@ x/ 1 > y-1;
     { type: TokenTypes.MINUS, literal: "-" },
     { type: TokenTypes.INT, literal: "1" },
     { type: TokenTypes.SEMICOLON, literal: ";" },
+    { type: TokenTypes.IF, literal: "if" },
+    { type: TokenTypes.LPAREN, literal: "(" },
+    { type: TokenTypes.INT, literal: "5" },
+    { type: TokenTypes.LT, literal: "<" },
+    { type: TokenTypes.INT, literal: "10" },
+    { type: TokenTypes.RPAREN, literal: ")" },
+    { type: TokenTypes.LBRACE, literal: "{" },
+    { type: TokenTypes.RETURN, literal: "return" },
+    { type: TokenTypes.TRUE, literal: "true" },
+    { type: TokenTypes.SEMICOLON, literal: ";" },
+    { type: TokenTypes.RBRACE, literal: "}" },
+    { type: TokenTypes.ELSE, literal: "else" },
+    { type: TokenTypes.LBRACE, literal: "{" },
+    { type: TokenTypes.RETURN, literal: "return" },
+    { type: TokenTypes.FALSE, literal: "false" },
+    { type: TokenTypes.SEMICOLON, literal: ";" },
+    { type: TokenTypes.RBRACE, literal: "}" },
     { type: TokenTypes.EOF, literal: "" },
   ];
   for (let answer of answers) {
