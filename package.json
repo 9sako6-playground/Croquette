@@ -1,7 +1,7 @@
 {
-  "name": "Croquette",
+  "name": "croquette",
   "version": "1.0.0",
-  "description": "a programming language written in  TypeScript",
+  "description": "A programming language written in TypeScript",
   "main": "index.ts",
   "repository": "https://github.com/9sako6-playground/Croquette.git",
   "author": "9sako6 <31821663+9sako6@users.noreply.github.com>",
