@@ -30,6 +30,9 @@ let add = fn(x, y){
 };
 
 let result = add(five, ten);
+
+!1 < 4*y;
+x/ 1 > y-1;
 `;
   const lexer = new Lexer(source);
   const answers: Array<{ type: TokenType; literal: string | number }> = [
@@ -68,6 +71,21 @@ let result = add(five, ten);
     { type: TokenTypes.COMMA, literal: "," },
     { type: TokenTypes.IDENT, literal: "ten" },
     { type: TokenTypes.RPAREN, literal: ")" },
+    { type: TokenTypes.SEMICOLON, literal: ";" },
+    { type: TokenTypes.BANG, literal: "!" },
+    { type: TokenTypes.INT, literal: "1" },
+    { type: TokenTypes.LT, literal: "<" },
+    { type: TokenTypes.INT, literal: "4" },
+    { type: TokenTypes.ASTERISK, literal: "*" },
+    { type: TokenTypes.IDENT, literal: "y" },
+    { type: TokenTypes.SEMICOLON, literal: ";" },
+    { type: TokenTypes.IDENT, literal: "x" },
+    { type: TokenTypes.SLASH, literal: "/" },
+    { type: TokenTypes.INT, literal: "1" },
+    { type: TokenTypes.GT, literal: ">" },
+    { type: TokenTypes.IDENT, literal: "y" },
+    { type: TokenTypes.MINUS, literal: "-" },
+    { type: TokenTypes.INT, literal: "1" },
     { type: TokenTypes.SEMICOLON, literal: ";" },
     { type: TokenTypes.EOF, literal: "" },
   ];

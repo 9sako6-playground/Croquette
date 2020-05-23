@@ -16,7 +16,15 @@ export type TokenType =
 
 export type KeywordType = "FUNCTION" | "LET";
 
-export type OperatorType = "ASSIGN" | "PLUS";
+export type OperatorType =
+  | "ASSIGN"
+  | "BANG"
+  | "PLUS"
+  | "MINUS"
+  | "ASTERISK"
+  | "SLASH"
+  | "GT"
+  | "LT";
 
 export type DelimiterType =
   | "COMMA"
@@ -34,7 +42,13 @@ export const TokenTypes: TokenTypes = {
   IDENT: "IDENT",
   INT: "INT",
   ASSIGN: "ASSIGN",
+  BANG: "BANG",
   PLUS: "PLUS",
+  MINUS: "MINUS",
+  ASTERISK: "ASTERISK",
+  SLASH: "SLASH",
+  GT: "GT",
+  LT: "LT",
   COMMA: "COMMA",
   SEMICOLON: "SEMICOLON",
   LPAREN: "LPAREN",

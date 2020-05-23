@@ -37,8 +37,7 @@ export class Lexer {
   }
 
   private isLetter(ch: string): ch is string {
-    return "a" <= ch && ch <= "z" || "A" <= ch && ch <= "Z" || ch === "_" ||
-      ch === "!";
+    return "a" <= ch && ch <= "z" || "A" <= ch && ch <= "Z" || ch === "_";
   }
 
   private readNumber(): string {
@@ -78,6 +77,27 @@ export class Lexer {
     switch (this.ch) {
       case "=":
         token = new Token(TokenTypes.ASSIGN, this.ch);
+        break;
+      case "!":
+        token = new Token(TokenTypes.BANG, this.ch);
+        break;
+      case "+":
+        token = new Token(TokenTypes.PLUS, this.ch);
+        break;
+      case "-":
+        token = new Token(TokenTypes.MINUS, this.ch);
+        break;
+      case "*":
+        token = new Token(TokenTypes.ASTERISK, this.ch);
+        break;
+      case "/":
+        token = new Token(TokenTypes.SLASH, this.ch);
+        break;
+      case ">":
+        token = new Token(TokenTypes.GT, this.ch);
+        break;
+      case "<":
+        token = new Token(TokenTypes.LT, this.ch);
         break;
       case ";":
         token = new Token(TokenTypes.SEMICOLON, this.ch);
