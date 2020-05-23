@@ -158,4 +158,12 @@ export class Lexer {
     this.readChar();
     return token;
   }
+
+  *[Symbol.iterator]() {
+    let token = this.nextToken();
+    while (token.type !== TokenTypes.EOF) {
+      yield token;
+      token = this.nextToken();
+    }
+  }
 }
