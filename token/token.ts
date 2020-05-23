@@ -26,6 +26,8 @@ export type KeywordType =
 export type OperatorType =
   | "ASSIGN"
   | "BANG"
+  | "EQ"
+  | "NOT_EQ"
   | "PLUS"
   | "MINUS"
   | "ASTERISK"
@@ -50,6 +52,8 @@ export const TokenTypes: TokenTypes = {
   INT: "INT",
   ASSIGN: "ASSIGN",
   BANG: "BANG",
+  EQ: "EQ",
+  NOT_EQ: "NOT_EQ",
   PLUS: "PLUS",
   MINUS: "MINUS",
   ASTERISK: "ASTERISK",

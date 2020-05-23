@@ -28,6 +28,14 @@ export class Lexer {
     ];
   }
 
+  private peekChar() {
+    if (this.readPosition >= this.source.length) {
+      return 0;
+    } else {
+      return this.source[this.readPosition];
+    }
+  }
+
   private readIdentifier(): string {
     const position = this.position;
     while (this.ch != 0 && this.isLetter(this.ch)) {
@@ -76,10 +84,22 @@ export class Lexer {
     this.skipWhitespace();
     switch (this.ch) {
       case "=":
-        token = new Token(TokenTypes.ASSIGN, this.ch);
+        if (this.peekChar() === '=') {
+          const ch = this.ch;
+          this.readChar();
+          token = new Token(TokenTypes.EQ, ch + this.ch);
+        } else {
+          token = new Token(TokenTypes.ASSIGN, this.ch);
+        }
         break;
       case "!":
-        token = new Token(TokenTypes.BANG, this.ch);
+        if (this.peekChar() === '=') {
+          const ch = this.ch;
+          this.readChar();
+          token = new Token(TokenTypes.NOT_EQ, ch + this.ch);
+        } else {
+          token = new Token(TokenTypes.BANG, this.ch);
+        }
         break;
       case "+":
         token = new Token(TokenTypes.PLUS, this.ch);
