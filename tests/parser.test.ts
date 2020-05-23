@@ -2,11 +2,11 @@ import { Parser } from "../src/parser";
 import { Lexer } from "../src/lexer";
 import { LetStatement } from "../src/ast";
 
-test("LetStatement", () => {
+test("should parse let statements", () => {
   const source = `
 let x = 5;
-let y = 10;
-let foobar = 1000000007;
+let y=10;
+let mod = 1000000007;
 `;
   const lexer = new Lexer(source);
   const parser = new Parser(lexer);
@@ -14,7 +14,7 @@ let foobar = 1000000007;
   expect(program).toBeTruthy;
   expect(program.statements.length).toEqual(3);
 
-  const identifiers = ["x", "y", "foobar"];
+  const identifiers = ["x", "y", "mod"];
   for (let i = 0; i < 3; ++i) {
     const statement = program.statements[i];
     expect(statement.tokenLiteral()).toEqual("let");
@@ -25,4 +25,15 @@ let foobar = 1000000007;
       expect(letStatement.name.token.literal).toEqual(identifiers[i]);
     }
   }
+});
+
+test("should throw Error", () => {
+  const source = `
+let x = 5;
+let 10;
+let = 1000000007;
+`;
+  const lexer = new Lexer(source);
+  const parser = new Parser(lexer);
+  expect(parser.parseProgram).toThrow(Error);
 });

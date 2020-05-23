@@ -1,7 +1,7 @@
 import { Lexer } from "../src/lexer";
 import { TokenTypes, TokenType } from "../src/token";
 
-test("test nextToken with signs", () => {
+test("should tokenize invalid code, too", () => {
   const source = "=+(){},;";
   const lexer = new Lexer(source);
   const answers: Array<{ type: TokenType; literal: string }> = [
@@ -21,7 +21,7 @@ test("test nextToken with signs", () => {
   }
 });
 
-test("test nextToken with a code", () => {
+test("should tokenize valid code", () => {
   const source = `let five = 5;
 let ten = 10;
 

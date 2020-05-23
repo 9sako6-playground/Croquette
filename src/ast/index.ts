@@ -31,11 +31,20 @@ export class Program {
 
 export class LetStatement extends Statement {
   constructor(
-    public token: Token,
-    public name: Identifier,
-    public value: Expression,
+    private _token: Token,
+    private _name: Identifier,
+    private _value: Expression,
   ) {
     super();
+  }
+  get token() {
+    return this._token;
+  }
+  get name() {
+    return this._name;
+  }
+  get value() {
+    return this._value;
   }
   statementNode() {}
   tokenLiteral(): string {
@@ -45,9 +54,15 @@ export class LetStatement extends Statement {
 
 export class Identifier {
   constructor(
-    public token: Token,
-    public value: string,
+    private _token: Token,
+    private _value: string,
   ) {}
+  get token() {
+    return this._token;
+  }
+  get value() {
+    return this._value;
+  }
   expressionNode() {}
   tokenLiteral(): string {
     return this.token.literal;
