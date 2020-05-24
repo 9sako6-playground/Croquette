@@ -1,6 +1,6 @@
 import { Parser } from "../src/parser";
 import { Lexer } from "../src/lexer";
-import { LetStatement } from "../src/ast";
+import { LetStatement, ExpressionStatement, Identifier } from "../src/ast";
 
 test("should parse let statements", () => {
   const source = `
@@ -53,4 +53,24 @@ let = 1000000007;
   const lexer = new Lexer(source);
   const parser = new Parser(lexer);
   expect(parser.parseProgram).toThrow(Error);
+});
+
+test("should parse identifier expression", () => {
+  const source = "foobar;";
+  const lexer = new Lexer(source);
+  const parser = new Parser(lexer);
+  const program = parser.parseProgram();
+
+  expect(program.statements.length).toEqual(1);
+  const statement = program.statements[0];
+  expect(statement instanceof ExpressionStatement).toBeTruthy;
+  if (statement instanceof ExpressionStatement) {
+    const expressionStatement: ExpressionStatement = statement;
+    const ident = expressionStatement.expression;
+    expect(ident instanceof Identifier).toBeTruthy;
+    if (ident instanceof Identifier) {
+      expect(ident.value).toEqual("foobar");
+      expect(ident.tokenLiteral()).toEqual("foobar");
+    }
+  }
 });
