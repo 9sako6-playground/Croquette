@@ -9,7 +9,8 @@ import {
   LetStatement,
   ReturnStatement,
   ExpressionStatement,
-  IntegerLiteral
+  IntegerLiteral,
+  PrefixExpression
 } from "../ast";
 
 type prefixParseFunc = () => Expression;
@@ -18,7 +19,6 @@ type infixParseFunc = (leftExpression: Expression) => Expression;
 export class Parser {
   private curToken: Token;
   private peekToken: Token;
-  private _errors: Array<string> = [];
   private prefixParseFuncs = new Map<TokenType, prefixParseFunc>();
   private infixParseFuncs = new Map<TokenType, infixParseFunc>();
 
@@ -29,10 +29,11 @@ export class Parser {
 
     this.registerPrefix(TokenTypes.IDENT, this.parseIdentifier.bind(this));
     this.registerPrefix(TokenTypes.INT, this.parseIntegerLiteral.bind(this));
-  }
-
-  get errors() {
-    return this._errors;
+    this.registerPrefix(TokenTypes.BANG, this.parsePrefixExpression.bind(this));
+    this.registerPrefix(
+      TokenTypes.MINUS,
+      this.parsePrefixExpression.bind(this),
+    );
   }
 
   private nextToken() {
@@ -40,7 +41,7 @@ export class Parser {
     this.peekToken = { ...this.lexer.nextToken() };
   }
 
-  private parseStatement(): Statement | null {
+  private parseStatement(): Statement {
     switch (this.curToken.type) {
       case TokenTypes.LET:
         return this.parseLetStatement();
@@ -51,11 +52,13 @@ export class Parser {
     }
   }
 
-  private parseLetStatement(): Statement | null {
+  private parseLetStatement(): Statement {
     const token = { ...this.curToken };
 
     if (!this.expectPeek(TokenTypes.IDENT)) {
-      return null;
+      throw new Error(
+        `expected next token to be ${TokenTypes.IDENT}, got ${this.curToken.type} instead`,
+      );
     }
     const statement = new LetStatement(
       token,
@@ -64,7 +67,9 @@ export class Parser {
     );
 
     if (!this.expectPeek(TokenTypes.ASSIGN)) {
-      return null;
+      throw new Error(
+        `expected next token to be ${TokenTypes.ASSIGN}, got ${this.curToken.type} instead`,
+      );
     }
 
     // TODO: skip
@@ -74,7 +79,7 @@ export class Parser {
     return statement;
   }
 
-  private parseReturnStatement(): Statement | null {
+  private parseReturnStatement(): Statement {
     const token = { ...this.curToken };
     const statement = new ReturnStatement(token, (new Expression()));
     this.nextToken();
@@ -86,11 +91,8 @@ export class Parser {
     return statement;
   }
 
-  private parseExpressionStatement(): Statement | null {
+  private parseExpressionStatement(): Statement {
     const expression = this.parseExpression(Precedences.LOWEST);
-    if (expression === null) {
-      return null;
-    }
     const statement = new ExpressionStatement(
       this.curToken,
       expression,
@@ -101,10 +103,12 @@ export class Parser {
     return statement;
   }
 
-  private parseExpression(precedence: PrecedenceValue): Expression | null {
+  private parseExpression(precedence: PrecedenceValue): Expression {
     const prefix = this.prefixParseFuncs.get(this.curToken.type);
     if (!prefix) {
-      return null; // TODO: is this correct?
+      throw new Error(
+        `no prefix parse function for ${this.curToken.type} found`,
+      );
     }
     const leftExp = prefix();
     return leftExp;
@@ -121,6 +125,13 @@ export class Parser {
     return new IntegerLiteral(this.curToken, Number(this.curToken.literal));
   }
 
+  private parsePrefixExpression(): Expression {
+    const token = { ...this.curToken };
+    this.nextToken();
+    const right = this.parseExpression(Precedences.PREFIX);
+    return new PrefixExpression(token, token.literal, right);
+  }
+
   private curTokenIs(type: TokenType): boolean {
     return this.curToken.type === type;
   }
@@ -129,19 +140,14 @@ export class Parser {
     return this.peekToken.type === type;
   }
 
-  private peekError(type: TokenType) {
-    const message =
-      `Error: expected next token to be ${type}, got ${this.peekToken.type} instead`;
-    this.errors.push(message);
-  }
-
   private expectPeek(type: TokenType): boolean {
     if (this.peekTokenIs(type)) {
       this.nextToken();
       return true;
     } else {
-      this.peekError(type);
-      return false;
+      throw new Error(
+        `expected next token to be ${type}, got ${this.peekToken.type} instead`,
+      );
     }
   }
 
@@ -157,14 +163,8 @@ export class Parser {
     const program = new Program([]);
     while (this.curToken.type !== TokenTypes.EOF) {
       const statement = this.parseStatement();
-      if (statement !== null) {
-        program.statements.push(statement);
-      }
+      program.statements.push(statement);
       this.nextToken();
-    }
-    if (this.errors.length > 0) {
-      this.errors.forEach((error) => console.log(error));
-      throw new Error();
     }
     return program;
   }

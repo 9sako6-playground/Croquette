@@ -4,7 +4,8 @@ import {
   LetStatement,
   ExpressionStatement,
   Identifier,
-  IntegerLiteral
+  IntegerLiteral,
+  PrefixExpression
 } from "../src/ast";
 
 test("should parse let statements", () => {
@@ -28,6 +29,8 @@ let mod = 1000000007;
       const letStatement: LetStatement = statement;
       expect(letStatement.name.value).toEqual(identifiers[i]);
       expect(letStatement.name.token.literal).toEqual(identifiers[i]);
+    } else {
+      throw new Error();
     }
   }
 });
@@ -76,7 +79,11 @@ test("should parse identifier expression", () => {
     if (ident instanceof Identifier) {
       expect(ident.value).toEqual("foobar");
       expect(ident.tokenLiteral()).toEqual("foobar");
+    } else {
+      throw new Error();
     }
+  } else {
+    throw new Error();
   }
 });
 
@@ -96,6 +103,47 @@ test("should parse integer literal expression", () => {
     if (ident instanceof IntegerLiteral) {
       expect(ident.value).toEqual(57);
       expect(ident.tokenLiteral()).toEqual("57");
+    } else {
+      throw new Error();
     }
+  } else {
+    throw new Error();
   }
+});
+
+test("should parse prefix-expressions", () => {
+  const samples = [
+    { souce: "!5", operator: "!", integerValue: 5 },
+    { souce: "-15", operator: "-", integerValue: 15 },
+  ];
+  samples.forEach((sample) => {
+    const lexer = new Lexer(sample.souce);
+    const parser = new Parser(lexer);
+    const program = parser.parseProgram();
+
+    expect(program.statements.length).toEqual(1);
+    const statement = program.statements[0];
+    expect(statement instanceof ExpressionStatement).toBeTruthy;
+    if (statement instanceof ExpressionStatement) {
+      const exp = statement.expression;
+      expect(exp instanceof PrefixExpression).toBeTruthy;
+      if (exp instanceof PrefixExpression) {
+        expect(exp.operator).toEqual(sample.operator);
+        expect(exp.right instanceof IntegerLiteral).toBeTruthy;
+        if (exp.right instanceof IntegerLiteral) {
+          const integerLiteral = exp.right;
+          expect(integerLiteral.value).toEqual(sample.integerValue);
+          expect(integerLiteral.tokenLiteral()).toEqual(
+            String(sample.integerValue),
+          );
+        } else {
+          throw new Error();
+        }
+      } else {
+        throw new Error();
+      }
+    } else {
+      throw new Error();
+    }
+  });
 });

@@ -138,3 +138,20 @@ export class IntegerLiteral extends Expression {
     return this.token.literal;
   }
 }
+
+export class PrefixExpression extends Expression {
+  constructor(
+    readonly token: Token,
+    readonly operator: string,
+    readonly right: Expression,
+  ) {
+    super();
+  }
+  expressionNode() {}
+  tokenLiteral(): string {
+    return this.token.literal;
+  }
+  string(): string {
+    return `(${this.operator} ${this.right.string()})`;
+  }
+}
