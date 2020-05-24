@@ -1,3 +1,3 @@
-import { startRepl } from "./repl";
+import { startRepl } from "./src/repl";
 
 startRepl();
