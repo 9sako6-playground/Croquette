@@ -84,7 +84,7 @@ export class Parser {
     }
 
     // TODO: skip
-    while (!this.curTokenIs(TokenTypes.SEMICOLON)) {
+    while (!this.curTokenIs(TokenTypes.SEMICOLON) && !this.curTokenIs(TokenTypes.EOF)) {
       this.nextToken();
     }
     return statement;
@@ -96,7 +96,7 @@ export class Parser {
     this.nextToken();
 
     // TODO: skip
-    while (!this.curTokenIs(TokenTypes.SEMICOLON)) {
+    while (!this.curTokenIs(TokenTypes.SEMICOLON) && !this.curTokenIs(TokenTypes.EOF)) {
       this.nextToken();
     }
     return statement;

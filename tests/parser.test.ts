@@ -36,6 +36,16 @@ let mod = 1000000007;
   }
 });
 
+test('should finish to parse non-semicolon statement', () => {
+  const samples = [`let a = 10`, `return 10`];
+  samples.forEach(sample => {
+    const lexer = new Lexer(sample);
+    const parser = new Parser(lexer);
+    const program = parser.parseProgram();
+    expect(program.statements.length).toEqual(1);
+  });
+});
+
 test('should parse return statements', () => {
   const source = `
 return 5;
