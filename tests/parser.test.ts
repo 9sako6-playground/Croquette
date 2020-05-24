@@ -114,11 +114,11 @@ test('should parse integer literal expression', () => {
 
 test('should parse prefix-expressions', () => {
   const samples = [
-    { souce: '!5', operator: '!', integerValue: 5 },
-    { souce: '-15', operator: '-', integerValue: 15 },
+    { source: '!5', operator: '!', integerValue: 5 },
+    { source: '-15', operator: '-', integerValue: 15 },
   ];
   samples.forEach((sample) => {
-    const lexer = new Lexer(sample.souce);
+    const lexer = new Lexer(sample.source);
     const parser = new Parser(lexer);
     const program = parser.parseProgram();
 
@@ -151,17 +151,17 @@ test('should parse prefix-expressions', () => {
 
 test('should parse infix-expressions', () => {
   const samples = [
-    { souce: '5 + 6', leftValue: 5, operator: '+', rightValue: 6 },
-    { souce: '5 - 6', leftValue: 5, operator: '-', rightValue: 6 },
-    { souce: '5 * 6', leftValue: 5, operator: '*', rightValue: 6 },
-    { souce: '5 / 6', leftValue: 5, operator: '/', rightValue: 6 },
-    { souce: '5 > 6', leftValue: 5, operator: '>', rightValue: 6 },
-    { souce: '5 < 6', leftValue: 5, operator: '<', rightValue: 6 },
-    { souce: '5 == 6', leftValue: 5, operator: '==', rightValue: 6 },
-    { souce: '5 != 6', leftValue: 5, operator: '!=', rightValue: 6 },
+    { source: '5 + 6', leftValue: 5, operator: '+', rightValue: 6 },
+    { source: '5 - 6', leftValue: 5, operator: '-', rightValue: 6 },
+    { source: '5 * 6', leftValue: 5, operator: '*', rightValue: 6 },
+    { source: '5 / 6', leftValue: 5, operator: '/', rightValue: 6 },
+    { source: '5 > 6', leftValue: 5, operator: '>', rightValue: 6 },
+    { source: '5 < 6', leftValue: 5, operator: '<', rightValue: 6 },
+    { source: '5 == 6', leftValue: 5, operator: '==', rightValue: 6 },
+    { source: '5 != 6', leftValue: 5, operator: '!=', rightValue: 6 },
   ];
   samples.forEach((sample) => {
-    const lexer = new Lexer(sample.souce);
+    const lexer = new Lexer(sample.source);
     const parser = new Parser(lexer);
     const program = parser.parseProgram();
 
@@ -193,5 +193,64 @@ test('should parse infix-expressions', () => {
     } else {
       throw new Error();
     }
+  });
+});
+
+test('should parse expressions', () => {
+  const samples = [
+    {
+      source: '-a * b',
+      expected: '((-a) * b)',
+    },
+    {
+      source: '!-a',
+      expected: '(!(-a))',
+    },
+    {
+      source: 'a + b + c',
+      expected: '((a + b) + c)',
+    },
+    {
+      source: 'a + b - c',
+      expected: '((a + b) - c)',
+    },
+    {
+      source: 'a * b * c',
+      expected: '((a * b) * c)',
+    },
+    {
+      source: 'a / b / c',
+      expected: '((a / b) / c)',
+    },
+    {
+      source: 'a + b / c',
+      expected: '(a + (b / c))',
+    },
+    {
+      source: 'a + b * c + d / e - f',
+      expected: '(((a + (b * c)) + (d / e)) - f)',
+    },
+    {
+      source: '3 + 4; -5 * 5',
+      expected: '(3 + 4)((-5) * 5)',
+    },
+    {
+      source: '5 > 4 == 3 < 4',
+      expected: '((5 > 4) == (3 < 4))',
+    },
+    {
+      source: '5 < 4 != 3 > 4',
+      expected: '((5 < 4) != (3 > 4))',
+    },
+    {
+      source: '3 + 4 * 5 == 3 * 1 + 4 * 5',
+      expected: '((3 + (4 * 5)) == ((3 * 1) + (4 * 5)))',
+    },
+  ];
+  samples.forEach(sample => {
+    const lexer = new Lexer(sample.source);
+    const parser = new Parser(lexer);
+    const program = parser.parseProgram();
+    expect(program.string()).toEqual(sample.expected);
   });
 });
