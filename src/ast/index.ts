@@ -122,3 +122,19 @@ export class Identifier extends Expression {
     return this.value;
   }
 }
+
+export class IntegerLiteral extends Expression {
+  constructor(
+    readonly token: Token,
+    readonly value: number,
+  ) {
+    super();
+  }
+  expressionNode() {}
+  tokenLiteral(): string {
+    return this.token.literal;
+  }
+  string(): string {
+    return this.token.literal;
+  }
+}

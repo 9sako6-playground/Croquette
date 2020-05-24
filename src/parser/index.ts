@@ -8,7 +8,8 @@ import {
   Identifier,
   LetStatement,
   ReturnStatement,
-  ExpressionStatement
+  ExpressionStatement,
+  IntegerLiteral
 } from "../ast";
 
 type prefixParseFunc = () => Expression;
@@ -27,6 +28,7 @@ export class Parser {
     this.peekToken = { ...this.lexer.nextToken() };
 
     this.registerPrefix(TokenTypes.IDENT, this.parseIdentifier.bind(this));
+    this.registerPrefix(TokenTypes.INT, this.parseIntegerLiteral.bind(this));
   }
 
   get errors() {
@@ -110,6 +112,13 @@ export class Parser {
 
   private parseIdentifier(): Expression {
     return new Identifier(this.curToken, this.curToken.literal);
+  }
+
+  private parseIntegerLiteral(): Expression {
+    if (isNaN(Number(this.curToken.literal))) {
+      throw new Error();
+    }
+    return new IntegerLiteral(this.curToken, Number(this.curToken.literal));
   }
 
   private curTokenIs(type: TokenType): boolean {
