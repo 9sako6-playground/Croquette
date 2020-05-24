@@ -1,5 +1,6 @@
 import * as readline from 'readline';
 import { Lexer } from '../lexer';
+import { Parser } from '../parser';
 
 export function startRepl() {
   const PROMPT = '>> ';
@@ -9,26 +10,20 @@ export function startRepl() {
     prompt: PROMPT,
   });
 
-  let buf = '';
-
   rl.prompt();
   rl.on('line', async (input) => {
-    buf += input;
     if (input.length) {
       try {
-        '';
-      } catch (err) {
-        buf += '\n';
-        rl.setPrompt('...');
-        rl.prompt();
-        return;
+        for (let l of new Lexer(input)) {
+          console.dir(l);
+        }
+        const lexer = new Lexer(input);
+        const parser = new Parser(lexer);
+        const program = parser.parseProgram();
+        console.log(program.string());
+      } catch (error) {
+        console.error(error);
       }
-      const lexer = new Lexer(buf);
-      for (let l of lexer) {
-        console.dir(l);
-      }
-    } else {
-      buf = '';
     }
     rl.setPrompt(PROMPT);
     rl.prompt();

@@ -53,15 +53,24 @@ return  1000000007;
   });
 });
 
-test('should throw Error', () => {
-  const source = `
-let x = 5;
-let 10;
-let = 1000000007;
-`;
-  const lexer = new Lexer(source);
-  const parser = new Parser(lexer);
-  expect(parser.parseProgram).toThrow(Error);
+describe('should throw error', () => {
+  test('lack of identifier', () => {
+    const source = `
+  let x = 5;
+  let 10;
+  let = 1000000007;
+  `;
+    const lexer = new Lexer(source);
+    const parser = new Parser(lexer);
+    expect(parser.parseProgram).toThrow(Error);
+  });
+
+  test('lack of semicolon', () => {
+    const source = `let a = 10`;
+    const lexer = new Lexer(source);
+    const parser = new Parser(lexer);
+    expect(parser.parseProgram).toThrow(Error);
+  });
 });
 
 test('should parse identifier expression', () => {
