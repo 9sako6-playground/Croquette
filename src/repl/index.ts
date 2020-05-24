@@ -1,25 +1,25 @@
-import * as readline from "readline";
-import { Lexer } from "../lexer";
+import * as readline from 'readline';
+import { Lexer } from '../lexer';
 
 export function startRepl() {
-  const PROMPT = ">> ";
+  const PROMPT = '>> ';
   const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout,
     prompt: PROMPT,
   });
 
-  let buf = "";
+  let buf = '';
 
   rl.prompt();
-  rl.on("line", async (input) => {
+  rl.on('line', async (input) => {
     buf += input;
     if (input.length) {
       try {
-        "";
+        '';
       } catch (err) {
-        buf += "\n";
-        rl.setPrompt("...");
+        buf += '\n';
+        rl.setPrompt('...');
         rl.prompt();
         return;
       }
@@ -28,12 +28,12 @@ export function startRepl() {
         console.dir(l);
       }
     } else {
-      buf = "";
+      buf = '';
     }
     rl.setPrompt(PROMPT);
     rl.prompt();
-  }).on("close", () => {
-    console.log("( ;ᴗ;)ﾉｼ");
+  }).on('close', () => {
+    console.log('( ;ᴗ;)ﾉｼ');
     process.exit(0);
   });
 }

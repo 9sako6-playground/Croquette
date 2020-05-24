@@ -1,4 +1,4 @@
-import { Token } from "../token";
+import { Token } from '../token';
 
 interface Node {
   tokenLiteral: () => string;
@@ -6,7 +6,7 @@ interface Node {
 }
 
 export class Statement implements Node {
-  public type = "Statement" as const;
+  public type = 'Statement' as const;
   tokenLiteral(): string {
     return this.type;
   }
@@ -16,7 +16,7 @@ export class Statement implements Node {
 }
 
 export class Expression implements Node {
-  public type = "Expression" as const;
+  public type = 'Expression' as const;
   tokenLiteral(): string {
     return this.type;
   }
@@ -31,11 +31,11 @@ export class Program implements Node {
     if (this.statements.length > 0) {
       return this.statements[0].tokenLiteral();
     } else {
-      return "";
+      return '';
     }
   }
   string(): string {
-    let buffer = "";
+    let buffer = '';
     this.statements.forEach((statement) => {
       buffer += statement.string();
     });
@@ -56,12 +56,12 @@ export class LetStatement extends Statement {
     return this.token.literal;
   }
   string(): string {
-    let buffer = "";
+    let buffer = '';
     buffer += `${this.tokenLiteral()} ${this.name.string()} = `;
     if (this.value !== null) {
       buffer += this.value.string();
     }
-    buffer += ";";
+    buffer += ';';
     return buffer;
   }
 }
@@ -78,12 +78,12 @@ export class ReturnStatement extends Statement {
     return this.token.literal;
   }
   string(): string {
-    let buffer = "";
+    let buffer = '';
     buffer += `${this.tokenLiteral()} `;
     if (this.returnValue !== null) {
       buffer += this.returnValue.string();
     }
-    buffer += ";";
+    buffer += ';';
     return buffer;
   }
 }
@@ -103,7 +103,7 @@ export class ExpressionStatement extends Statement {
     if (this.expression !== null) {
       return this.expression.string();
     }
-    return "";
+    return '';
   }
 }
 
@@ -152,6 +152,24 @@ export class PrefixExpression extends Expression {
     return this.token.literal;
   }
   string(): string {
-    return `(${this.operator} ${this.right.string()})`;
+    return `(${this.operator}${this.right.string()})`;
+  }
+}
+
+export class InfixExpression extends Expression {
+  constructor(
+    readonly token: Token,
+    readonly operator: string,
+    readonly left: Expression,
+    readonly right: Expression,
+  ) {
+    super();
+  }
+  expressionNode() {}
+  tokenLiteral(): string {
+    return this.token.literal;
+  }
+  string(): string {
+    return `(${this.left.string()} ${this.operator} ${this.right.string()})`;
   }
 }

@@ -3,14 +3,14 @@ import {
   TokenType,
   TokenTypes,
   Keyword,
-  KeywordTypes
-} from "../token";
+  KeywordTypes,
+} from '../token';
 
 type Char = string | 0;
 export class Lexer {
   private position = -1;
   private readPosition = 0;
-  private ch: Char = "";
+  private ch: Char = '';
 
   constructor(private source: string) {
     this.readChar();
@@ -45,7 +45,7 @@ export class Lexer {
   }
 
   private isLetter(ch: string): ch is string {
-    return "a" <= ch && ch <= "z" || "A" <= ch && ch <= "Z" || ch === "_";
+    return 'a' <= ch && ch <= 'z' || 'A' <= ch && ch <= 'Z' || ch === '_';
   }
 
   private readNumber(): string {
@@ -57,7 +57,7 @@ export class Lexer {
   }
 
   private isDigit(ch: string): boolean {
-    return "0" <= ch && ch <= "9";
+    return '0' <= ch && ch <= '9';
   }
 
   private isKeyword(literal: string): literal is Keyword {
@@ -72,8 +72,8 @@ export class Lexer {
 
   private skipWhitespace() {
     while (
-      this.ch === " " || this.ch === "\t" || this.ch === "\n" ||
-      this.ch === "\r"
+      this.ch === ' ' || this.ch === '\t' || this.ch === '\n'
+      || this.ch === '\r'
     ) {
       this.readChar();
     }
@@ -83,8 +83,8 @@ export class Lexer {
     let token: Token;
     this.skipWhitespace();
     switch (this.ch) {
-      case "=":
-        if (this.peekChar() === "=") {
+      case '=':
+        if (this.peekChar() === '=') {
           const ch = this.ch;
           this.readChar();
           token = new Token(TokenTypes.EQ, ch + this.ch);
@@ -92,8 +92,8 @@ export class Lexer {
           token = new Token(TokenTypes.ASSIGN, this.ch);
         }
         break;
-      case "!":
-        if (this.peekChar() === "=") {
+      case '!':
+        if (this.peekChar() === '=') {
           const ch = this.ch;
           this.readChar();
           token = new Token(TokenTypes.NOT_EQ, ch + this.ch);
@@ -101,47 +101,47 @@ export class Lexer {
           token = new Token(TokenTypes.BANG, this.ch);
         }
         break;
-      case "+":
+      case '+':
         token = new Token(TokenTypes.PLUS, this.ch);
         break;
-      case "-":
+      case '-':
         token = new Token(TokenTypes.MINUS, this.ch);
         break;
-      case "*":
+      case '*':
         token = new Token(TokenTypes.ASTERISK, this.ch);
         break;
-      case "/":
+      case '/':
         token = new Token(TokenTypes.SLASH, this.ch);
         break;
-      case ">":
+      case '>':
         token = new Token(TokenTypes.GT, this.ch);
         break;
-      case "<":
+      case '<':
         token = new Token(TokenTypes.LT, this.ch);
         break;
-      case ";":
+      case ';':
         token = new Token(TokenTypes.SEMICOLON, this.ch);
         break;
-      case "(":
+      case '(':
         token = new Token(TokenTypes.LPAREN, this.ch);
         break;
-      case ")":
+      case ')':
         token = new Token(TokenTypes.RPAREN, this.ch);
         break;
-      case ",":
+      case ',':
         token = new Token(TokenTypes.COMMA, this.ch);
         break;
-      case "+":
+      case '+':
         token = new Token(TokenTypes.PLUS, this.ch);
         break;
-      case "{":
+      case '{':
         token = new Token(TokenTypes.LBRACE, this.ch);
         break;
-      case "}":
+      case '}':
         token = new Token(TokenTypes.RBRACE, this.ch);
         break;
       case 0:
-        token = new Token(TokenTypes.EOF, "");
+        token = new Token(TokenTypes.EOF, '');
         break;
       default:
         if (this.isLetter(this.ch)) {

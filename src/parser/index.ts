@@ -1,6 +1,11 @@
-import { Lexer } from "../lexer";
-import { Token, TokenType, TokenTypes } from "../token";
-import { Precedences, PrecedenceValue } from "./precedence";
+import { Lexer } from '../lexer';
+import { Token, TokenType, TokenTypes } from '../token';
+import {
+  Precedences,
+  PrecedenceValue,
+  TokenTypePrecedences,
+  Precedence,
+} from './precedence';
 import {
   Program,
   Expression,
@@ -10,11 +15,12 @@ import {
   ReturnStatement,
   ExpressionStatement,
   IntegerLiteral,
-  PrefixExpression
-} from "../ast";
+  PrefixExpression,
+  InfixExpression,
+} from '../ast';
 
-type prefixParseFunc = () => Expression;
-type infixParseFunc = (leftExpression: Expression) => Expression;
+type prefixParseFunc = () => Expression | null;
+type infixParseFunc = (leftExpression: Expression) => Expression | null;
 
 export class Parser {
   private curToken: Token;
@@ -30,10 +36,16 @@ export class Parser {
     this.registerPrefix(TokenTypes.IDENT, this.parseIdentifier.bind(this));
     this.registerPrefix(TokenTypes.INT, this.parseIntegerLiteral.bind(this));
     this.registerPrefix(TokenTypes.BANG, this.parsePrefixExpression.bind(this));
-    this.registerPrefix(
-      TokenTypes.MINUS,
-      this.parsePrefixExpression.bind(this),
-    );
+    this.registerPrefix(TokenTypes.MINUS, this.parsePrefixExpression.bind(this));
+
+    this.registerInfix(TokenTypes.PLUS, this.parseInfixExpression.bind(this));
+    this.registerInfix(TokenTypes.MINUS, this.parseInfixExpression.bind(this));
+    this.registerInfix(TokenTypes.SLASH, this.parseInfixExpression.bind(this));
+    this.registerInfix(TokenTypes.ASTERISK, this.parseInfixExpression.bind(this));
+    this.registerInfix(TokenTypes.EQ, this.parseInfixExpression.bind(this));
+    this.registerInfix(TokenTypes.NOT_EQ, this.parseInfixExpression.bind(this));
+    this.registerInfix(TokenTypes.LT, this.parseInfixExpression.bind(this));
+    this.registerInfix(TokenTypes.GT, this.parseInfixExpression.bind(this));
   }
 
   private nextToken() {
@@ -41,7 +53,7 @@ export class Parser {
     this.peekToken = { ...this.lexer.nextToken() };
   }
 
-  private parseStatement(): Statement {
+  private parseStatement(): Statement | null {
     switch (this.curToken.type) {
       case TokenTypes.LET:
         return this.parseLetStatement();
@@ -91,8 +103,11 @@ export class Parser {
     return statement;
   }
 
-  private parseExpressionStatement(): Statement {
+  private parseExpressionStatement(): Statement | null {
     const expression = this.parseExpression(Precedences.LOWEST);
+    if (expression === null) {
+      return null;
+    }
     const statement = new ExpressionStatement(
       this.curToken,
       expression,
@@ -103,14 +118,29 @@ export class Parser {
     return statement;
   }
 
-  private parseExpression(precedence: PrecedenceValue): Expression {
+  private parseExpression(precedence: PrecedenceValue): Expression | null {
     const prefix = this.prefixParseFuncs.get(this.curToken.type);
     if (!prefix) {
-      throw new Error(
-        `no prefix parse function for ${this.curToken.type} found`,
-      );
+      // throw new Error(
+      //   `no prefix parse function for ${this.curToken.type} found`,
+      // );
+      return null;
     }
-    const leftExp = prefix();
+    let leftExp = prefix();
+    while (!this.peekTokenIs(TokenTypes.SEMICOLON) && precedence < Precedences[this.peekPrecedence()]) {
+      const infix = this.infixParseFuncs.get(this.peekToken.type);
+      if (!infix) {
+        // throw new Error(
+        //   `no infix parse function for ${this.peekToken.type} found`,
+        // );
+        return leftExp;
+      }
+      if (leftExp === null) {
+        return null;
+      }
+      this.nextToken();
+      leftExp = infix(leftExp);
+    }
     return leftExp;
   }
 
@@ -125,11 +155,25 @@ export class Parser {
     return new IntegerLiteral(this.curToken, Number(this.curToken.literal));
   }
 
-  private parsePrefixExpression(): Expression {
+  private parsePrefixExpression(): Expression | null {
     const token = { ...this.curToken };
     this.nextToken();
     const right = this.parseExpression(Precedences.PREFIX);
+    if (right === null) {
+      return null;
+    }
     return new PrefixExpression(token, token.literal, right);
+  }
+
+  private parseInfixExpression(left: Expression): Expression | null {
+    const token = this.curToken;
+    const precedence = this.curPrecedence();
+    this.nextToken();
+    const right = this.parseExpression(Precedences[precedence]);
+    if (right === null) {
+      return null;
+    }
+    return new InfixExpression(token, token.literal, left, right);
   }
 
   private curTokenIs(type: TokenType): boolean {
@@ -151,6 +195,14 @@ export class Parser {
     }
   }
 
+  private curPrecedence(): Precedence {
+    return TokenTypePrecedences.get(this.curToken.type) ?? 'LOWEST';
+  }
+
+  private peekPrecedence(): Precedence {
+    return TokenTypePrecedences.get(this.peekToken.type) ?? 'LOWEST';
+  }
+
   private registerPrefix(tokenType: TokenType, func: prefixParseFunc) {
     this.prefixParseFuncs.set(tokenType, func);
   }
@@ -163,7 +215,9 @@ export class Parser {
     const program = new Program([]);
     while (this.curToken.type !== TokenTypes.EOF) {
       const statement = this.parseStatement();
-      program.statements.push(statement);
+      if (statement !== null) {
+        program.statements.push(statement);
+      }
       this.nextToken();
     }
     return program;
